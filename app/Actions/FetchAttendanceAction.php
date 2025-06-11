@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Concerns\InteractsWithIO;
 use App\Models\Employee;
 use App\Models\Attendance;
+use App\Models\FingerprintDevice;
 use Carbon\Carbon;
 use Lorisleiva\Actions\Concerns\AsCommand;
 
@@ -19,11 +20,11 @@ class FetchAttendanceAction
     public string $commandSignature = 'attendance:fetch';
     public string $commandDescription = 'Fetch attendance from ZKTeco device and store it in the database';
 
-    public function handle()
+    public function handle(FingerprintDevice $fingerprintDevice)
     {
         echo "Fetching attendance.\n";
         try {
-            $zk = new ZKTeco('10.0.0.202', 4370);
+            $zk = new ZKTeco($fingerprintDevice?->ip, $fingerprintDevice?->port);
 
             if (!$zk->connect()) {
                 Log::error('Failed to connect to ZKTeco device.');

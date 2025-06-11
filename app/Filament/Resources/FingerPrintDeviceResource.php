@@ -28,6 +28,7 @@ class FingerPrintDeviceResource extends Resource
                 TextInput::make('name')->required()->unique(),
                 TextInput::make('ip')->required(),
                 TextInput::make('port')->nullable(),
+                TextInput::make('password')->nullable(),
             ]);
     }
 
@@ -38,6 +39,8 @@ class FingerPrintDeviceResource extends Resource
                 TextColumn::make('name')->sortable(),
                 TextColumn::make('ip')->searchable(),
                 TextColumn::make('port')->sortable(),
+                // TextColumn::
+
             ])
             ->filters([
                 //
