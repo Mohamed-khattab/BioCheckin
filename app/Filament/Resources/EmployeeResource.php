@@ -19,6 +19,11 @@ use Filament\Tables\Filters\Filter;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Widgets\Widgets;
+use App\Filament\Widgets\EmployeeStatsWidget;
+use App\Filament\Widgets\LatestEmployeesWidget;
+use App\Filament\Widgets\DepartmentDistributionWidget;
+use App\Filament\Widgets\EmployeeAttendanceWidget;
 
 class EmployeeResource extends Resource
 {
@@ -71,5 +76,19 @@ class EmployeeResource extends Resource
             'create' => Pages\CreateEmployee::route('/create'),
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
         ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            EmployeeStatsWidget::class,
+            DepartmentDistributionWidget::class,
+            EmployeeAttendanceWidget::class,
+        ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }
