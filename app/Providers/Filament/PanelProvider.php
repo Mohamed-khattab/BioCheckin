@@ -35,10 +35,13 @@ class PanelProvider extends FilamentPanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\AttendanceOverviewWidget::class,
+                \App\Filament\Widgets\AttendanceTrendWidget::class,
+                \App\Filament\Widgets\DepartmentDistributionWidget::class,
+                \App\Filament\Widgets\CheckInTimeDistributionWidget::class,
+                \App\Filament\Widgets\FingerprintDeviceStatsWidget::class,
+                \App\Filament\Widgets\FingerprintDeviceActivityWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
