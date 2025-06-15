@@ -21,7 +21,10 @@ class Attendance extends Model
         'attendance_date',
         'check_in_time',
         'check_out_time',
-        'total_hours'
+        'total_hours',
+        'working_hours',
+        'is_late',
+        'is_early_departure'
     ];
 
     protected $casts = [
@@ -30,7 +33,10 @@ class Attendance extends Model
         'attendance_date' => 'date',
         'check_in_time' => 'datetime',
         'check_out_time' => 'datetime',
-        'total_hours' => 'decimal:2'
+        'total_hours' => 'decimal:2',
+        'working_hours' => 'decimal:2',
+        'is_late' => 'boolean',
+        'is_early_departure' => 'boolean',
     ];
 
     // Relationships
@@ -111,6 +117,52 @@ class Attendance extends Model
         }
     }
 
+    public function calculateWorkingHours(): float
+    {
+        if (!$this->check_in || !$this->check_out) {
+            return 0;
+        }
+
+        $hours = $this->check_out->diffInMinutes($this->check_in) / 60;
+        return round($hours, 2);
+    }
+
+    public function updateWorkingHours(): void
+    {
+        $this->working_hours = $this->calculateWorkingHours();
+        $this->save();
+    }
+
+    public function checkLateStatus(): void
+    {
+        if (!$this->check_in || !$this->employee?->activeSchedule) {
+            return;
+        }
+
+        $expectedCheckIn = $this->employee->getExpectedCheckInTime($this->check_in);
+        if (!$expectedCheckIn) {
+            return;
+        }
+
+        $this->is_late = $this->check_in->gt($expectedCheckIn);
+        $this->save();
+    }
+
+    public function checkEarlyDepartureStatus(): void
+    {
+        if (!$this->check_out || !$this->employee?->activeSchedule) {
+            return;
+        }
+
+        $expectedCheckOut = $this->employee->getExpectedCheckOutTime($this->check_out);
+        if (!$expectedCheckOut) {
+            return;
+        }
+
+        $this->is_early_departure = $this->check_out->lt($expectedCheckOut);
+        $this->save();
+    }
+
     protected static function booted()
     {
         static::creating(function ($attendance) {
@@ -128,6 +180,14 @@ class Attendance extends Model
             if ($attendance->isDirty('check_out')) {
                 $attendance->check_out_time = $attendance->check_out->toTimeString();
                 $attendance->calculateTotalHours();
+            }
+        });
+
+        static::saved(function ($attendance) {
+            if ($attendance->isDirty(['check_in', 'check_out'])) {
+                $attendance->updateWorkingHours();
+                $attendance->checkLateStatus();
+                $attendance->checkEarlyDepartureStatus();
             }
         });
     }

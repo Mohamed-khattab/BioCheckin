@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 class AttendanceOverviewWidget extends BaseWidget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 2;
     protected static ?string $pollingInterval = '30s';
     protected static ?string $maxHeight = '400px';
     protected int | string | array $columnSpan = ['lg' => 2];

@@ -39,9 +39,9 @@ class PanelProvider extends FilamentPanelProvider
                 \App\Filament\Widgets\AttendanceOverviewWidget::class,
                 \App\Filament\Widgets\AttendanceTrendWidget::class,
                 \App\Filament\Widgets\DepartmentDistributionWidget::class,
-                \App\Filament\Widgets\CheckInTimeDistributionWidget::class,
                 \App\Filament\Widgets\FingerprintDeviceStatsWidget::class,
                 \App\Filament\Widgets\FingerprintDeviceActivityWidget::class,
+                \App\Filament\Widgets\FingerprintDeviceActivityChartWidget::class
             ])
             ->middleware([
                 EncryptCookies::class,
